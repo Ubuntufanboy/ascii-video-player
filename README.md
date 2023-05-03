@@ -26,7 +26,6 @@
 1. have an mp4 file in the same folder or be prepared to provide the full video path
 2. run ``python3 mp4_to_asciivideo.py your_file.mp4``
 3. run ``python3 play.py the_same_video_file_but_not_mp4.asciivideo``
-4. once done, run rm -rf target (This step will be removed in the future but for now you need to do it)
 
 ## PLEASE report any bugs to me in an issue (No such thing as a dumb question)!
 
