@@ -59,6 +59,7 @@ time.sleep(1)
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
 
+os.chdir("target")
 os.mkdir("resized")
 for i in tqdm(range(1, frame_number+1)):
     image = Image.open(f"img/output{i}.png")
@@ -175,6 +176,7 @@ if not is_valid(frames):
 pygame.mixer.init()
 pygame.mixer.music.load(f"{current}/audio/audio.mp3")
 
+os.chdir("..")
 os.system("rm -rf target")
 
 logger.debug("Video playback started")
