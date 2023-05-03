@@ -1,7 +1,7 @@
 # The .asciivideo Codec 📺
 ### Feature rich video player with few dependencies. Works great with tty machines 🚀
 
-There will be a demo picture and demo video here later!
+![Demo image](ss.png)
 
 # WARNING ⚠️
 ## This project is not fully functional yet and bugs do appear quite often. This is simply a testing phase to find these bugs
@@ -18,6 +18,8 @@ There will be a demo picture and demo video here later!
 6. ``pip3 install pygame``
 7. ``sudo apt install git``
 8. ``git clone https://github.com/Ubuntufanboy/ascii-video-player``
+9. ``cd ascii-video-player``
+10. ``cd src``
 
 # Usage guide
 
