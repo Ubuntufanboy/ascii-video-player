@@ -12,6 +12,7 @@ import sys
 import time
 import os
 import pygame
+import logging
 import numpy as np
 from tqdm import tqdm
 from PIL import Image
@@ -24,8 +25,18 @@ except IndexError:
     print("Please provide a asciivideo file!")
     sys.exit(1)
 
+logger = logging.Logger("Ascii Video Logger")
+try:
+    verbose = sys.argv[2]
+    if verbose == "debug":
+        logger.setLevel(10)
+    elif verbose == "warning":
+        logger.setLevel(30)
+except IndexError:
+    logger.setLevel(40) # Only error
+
 if not video.endswith(".asciivideo"):
-    print("Invalid format!")
+    logger.error("No video file provided")
     sys.exit(1)
 
 tar_name = video.replace(".asciivideo", ".tar.gz")
@@ -43,7 +54,7 @@ os.chdir("..")
 os.chdir("..")
 
 # Let the fun begin
-print("Hey! I am grabbing the size of your terminal please don't move!")
+logger.warning("Please do not resize the screen")
 time.sleep(1)
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
@@ -62,12 +73,13 @@ w2 = []
 w3 = []
 w4 = []
 
-"""
-This function turns a numpy array of brightness values into a string
-that has each character representing the brightness of the pixel
-in the given frame
-"""
+
 def process(img: np.ndarray) -> str:
+    """
+    This function turns a numpy array of brightness values into a string
+    that has each character representing the brightness of the pixel
+    in the given frame
+    """
     vals = np.array([0, 50, 100, 150, 200, 255])  # These are the thresholds
     symbs = np.array(list(" +$#&@"))
     positions = np.searchsorted(vals, img.reshape(-1), "right") - 1
@@ -79,14 +91,14 @@ def process(img: np.ndarray) -> str:
 current = os.getcwd()
 
 
-"""
-Simple verification function
-to catch users changing the
-terminal window so the user
-will not be confused why
-the screen is glitched
-"""
 def is_valid(local_frames: list) -> bool:
+    """
+    Simple verification function
+    to catch users changing the
+    terminal window so the user
+    will not be confused why
+    the screen is glitched
+    """
     hor = os.get_terminal_size().columns
     ver = os.get_terminal_size().lines
     for string in local_frames:
@@ -106,7 +118,7 @@ def worker1():
         except Exception as e:
             print(e)
     if not is_valid(w1):
-        print("Content was courputed")
+        logger.error("Content was couripted")
         exit(1)
 
 
@@ -157,13 +169,15 @@ while len(w1) < nuli or len(w2) < slackers or len(w3) < slackers or len(w4) < sl
     pass
 frames = w1 + w2 + w3 + w4
 if not is_valid(frames):
-    print("Input was courputed!")
+    logger.error("Content was courupted")
     sys.exit(1)
+
 pygame.mixer.init()
 pygame.mixer.music.load(f"{current}/audio/audio.mp3")
-os.system("rm -rf target")
-print("Show time!")
 
+os.system("rm -rf target")
+
+logger.debug("Video playback started")
 frame = 0
 next_call = time.perf_counter()
 pygame.mixer.music.play()
