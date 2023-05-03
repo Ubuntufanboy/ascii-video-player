@@ -1,6 +1,5 @@
 import sys
 import os
-import random
 
 try:
     video_file = sys.argv[1]
@@ -21,14 +20,8 @@ os.system("mkdir target/img -p")
 os.system("mkdir target/audio -p")
 # Get random audio name to prevent overwriting
 
-options = ['apple','books','cooking','liquid','banana','cad','xcvhuuhrd','edhedjiedijrfguh','xcxcvhqkdiepqplslkfncbsjf']
-audiofilename = ""
-for i in range(5):
-    audiofilename += random.choice(options)
-audiofilename += ".mp3"
-
 # Extract audio from video
-os.system(f"ffmpeg -i {video_file} target/audio/{audiofilename}")
+os.system(f"ffmpeg -i {video_file} target/audio/audio.mp3")
 
 print("Congrats! The audio has been extracted from the video sucessfully")
 

@@ -42,21 +42,6 @@ with open("framenum.txt", 'r') as f:
 os.chdir("..")
 os.chdir("..")
 
-# Get audio file name
-
-os.chdir("target")
-os.chdir("audio")
-os.system("ls > audioname.txt")
-with open("audioname.txt", 'r') as f:
-    audioname = f.read()
-    audioname = audioname.replace("\naudioname.txt", "")
-    audioname = audioname.replace("audioname.txt", "")
-    audioname = audioname.replace("\n", "")
-    audioname = audioname.replace("audioname.txt", "")
-    print(f"DEBUG: {audioname}")
-os.system("rm audioname.txt")
-os.chdir("..")
-
 # Let the fun begin
 print("Hey! I am grabbing the size of your terminal please don't move!")
 time.sleep(1)
@@ -77,7 +62,11 @@ w2 = []
 w3 = []
 w4 = []
 
-
+"""
+This function turns a numpy array of brightness values into a string
+that has each character representing the brightness of the pixel
+in the given frame
+"""
 def process(img: np.ndarray) -> str:
     vals = np.array([0, 50, 100, 150, 200, 255])  # These are the thresholds
     symbs = np.array(list(" +$#&@"))
@@ -90,15 +79,23 @@ def process(img: np.ndarray) -> str:
 current = os.getcwd()
 
 
-def is_valid(frames: list) -> bool:
-    x = os.get_terminal_size().columns
-    y = os.get_terminal_size().lines
-    for frame in frames:
-        if len(frame) != x * y:
+"""
+Simple verification function
+to catch users changing the
+terminal window so the user
+will not be confused why
+the screen is glitched
+"""
+def is_valid(local_frames: list) -> bool:
+    hor = os.get_terminal_size().columns
+    ver = os.get_terminal_size().lines
+    for string in local_frames:
+        if len(string) != hor * ver:
             return False
     return True
 
 
+# Worker nodes
 def worker1():
     for i in tqdm(range(1, nuli+1)):
         try:
@@ -163,7 +160,8 @@ if not is_valid(frames):
     print("Input was courputed!")
     sys.exit(1)
 pygame.mixer.init()
-pygame.mixer.music.load(f"{current}/audio/{audioname}")
+pygame.mixer.music.load(f"{current}/audio/audio.mp3")
+os.system("rm -rf target")
 print("Show time!")
 
 frame = 0
