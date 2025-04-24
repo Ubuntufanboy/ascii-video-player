@@ -86,7 +86,7 @@ os.chdir("..")
 os.chdir("..")
 
 # Let the fun begin
-logger.warning("Please do NOT resize the screen")
+print("Please do NOT resize the screen")
 time.sleep(2)
 
 '''Get columns and lines of terminal'''
