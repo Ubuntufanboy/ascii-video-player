@@ -19,11 +19,13 @@ from PIL import Image
 from threading import Thread
 from shutil import rmtree
 from blessed import Terminal
+from multiprocessing import Pool
 
 term = Terminal() # Initialise blessed
 
-
+'''https://stackoverflow.com/questions/5174810/how-to-turn-off-blinking-cursor-in-command-window'''
 '''This section of the script hides the terminal terminal cursor'''
+
 if os.name == 'nt':
     import msvcrt
     import ctypes
@@ -45,11 +47,17 @@ elif os.name == 'posix' or os.name == "linux" or os.name == "linux2":
 # Extract the .asciivideo file
 try:
     video = sys.argv[1]
+    fps = float(sys.argv[2])  # Ensure FPS is valid
 except IndexError:
-    print("Please provide a asciivideo file!")
+    print(f"Usage: python {os.path.relpath(__file__)} <asciivideo_file> <fps>")
+    sys.exit(1)
+except ValueError:
+    print("FPS must be a number.")
     sys.exit(1)
 
+
 logger = logging.Logger("Ascii video logger")
+
 try:
     verbose = sys.argv[2]
     if verbose == "debug":
@@ -78,7 +86,7 @@ os.chdir("..")
 os.chdir("..")
 
 # Let the fun begin
-logger.warning("Please do NOT resize the screen")
+print("Please do NOT resize the screen")
 time.sleep(2)
 
 '''Get columns and lines of terminal'''
@@ -205,17 +213,24 @@ th4.start()
 while len(w1) < nuli or len(w2) < slackers or len(w3) < slackers or len(w4) < slackers:
     pass
 frames = w1 + w2 + w3 + w4
+
 if not is_valid(frames):
     logger.error("Content was courupted")
     sys.exit(1)
 
 pygame.mixer.init()
-pygame.mixer.music.load(f"{current}/audio/audio.mp3")
+if os.name == 'nt':
+    pygame.mixer.music.load(f"{current}\\audio\\audio.mp3")
+else:
+    pygame.mixer.music.load(f"{current}/audio/audio.mp3")
 
 os.chdir("..")
-
-rmtree("target") #Using python modules for compatibility with windows machines
-
+try:
+    rmtree("target") #Using python modules for compatibility with windows machines
+except FileNotFoundError:
+    pass
+except PermissionError:
+    pass
 logger.debug("Video playback started")
 frame = 0
 next_call = time.perf_counter()
@@ -234,13 +249,15 @@ And after that the video ends it exits.
 with term.fullscreen():
     while True:
         if time.perf_counter() > next_call:
-            next_call += 1/24 # 24 FPS
+            next_call += 1/fps # the FPS the user chooses
             try:
                 frame_buffer = term.move_yx(0, 0) + frames[frame]
                 print(frame_buffer, end='')  # Print all the data in one go
             except IndexError:
                 break # Video finished
             frame += 1
+
+'''Show terminal cursor'''
 
 if os.name == 'nt':
     ci = _CursorInfo()
